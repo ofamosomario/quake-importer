@@ -5,8 +5,7 @@ module Api
     # ImporterController
     class ImportersController < ApplicationController
       def create
-        file = import_params['file']
-        result = ImportService::Create.new(file).call
+        result = QuakeLogParserService.call(import_params['file'])
 
         if result
           render json: success_response(result), status: :ok
