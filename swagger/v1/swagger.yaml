@@ -1,0 +1,29 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/importers":
+    post:
+      summary: Upload a file for import
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                import[file]:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Import successful
+        '422':
+          description: Unprocessable Entity
+servers:
+- url: http://localhost:3000
+  variables:
+    defaultHost:
+      default: http://localhost:3000

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quake 3 Arena - Importer</title>
+    <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Modern+Antiqua&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      font-family: "Modern Antiqua", serif;
+      height: 100%;
+      color: #f2870c;
+    }
+
+    .btn-brown {
+      background-color: #b8680d;
+      border: #9c590e;
+    }
+
+    .btn-brown:hover {
+      background-color: #9c590e;
+    }
+
+    .btn-brown:focus {
+      background-color: #9c590e;
+    }
+
+    .btn:focus,.btn:active {
+      outline: none !important;
+      box-shadow: none;
+    }
+
+    .btn-close-brown {
+      background-color: #9c590e;
+    }
+
+    h1 {
+      font-size: 62px;
+    }
+
+    .content {
+      flex: 1 0 auto;
+    }
+
+    .footer {
+      flex-shrink: 0;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .footer-background {
+      background-image: url('<%= asset_path('/footer-background.png') %>');
+    }
+
+    .main-background {
+      background-image: url('<%= asset_path('/quake-background.png') %>');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  </style>
+
+  </head>
+  <body class="d-flex flex-column h-100 main-background">
+    <main class="flex-shrink-0">
+      <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-12 mt-3 d-flex justify-content-center align-items-center">
+              <%= image_tag '/main.png', alt: 'main' %>
+            </div>
+          <div class="col-md-12 mt-3 d-flex justify-content-center align-items-center">
+            <h1>Quake Importer Log</h1>
+          </div>
+          <div class="col-md-12 mt-3 d-flex justify-content-center align-items-center">
+            <input type="file" id="file" accept=".log" />
+            <input type="button" value="Upload" class="btn btn-primary btn-brown" onclick="importLog()" />
+          </div>
+          <div class="col-md-12 mt-3 d-flex justify-content-center align-items-center">
+            <div id="result"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="footer mt-auto footer-background">
+      <div class="container">
+        <%= image_tag '/face.png', alt: 'face', width: 90, height: 80 %>
+      </div>
+    </footer>
+
+    <div class="offcanvas offcanvas-top main-background" tabindex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel" style="height:86%">
+      <div class="row ms-2">
+        <div class="col-md-12">
+          <div class="offcanvas-header">
+            <h4 id="offcanvasTopLabel">Terminal:</h5>
+          </div>
+          <div class="offcanvas-body">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-12">
+                  <button type="button" class="btn-close btn-close-brown" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <pre id="summary" class="overflow-auto" style="height:500px;">No data.</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 48 || e.keyCode == 57 || e.keyCode == 222) {
+          var offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasTop'));
+          offcanvas.show();
+        }
+      });
+
+      function importLog() {
+        var resultElement = document.getElementById("result");
+        var summaryElement = document.getElementById("summary");
+        var fileInput = document.getElementById("file");
+
+        if (!fileInput.files.length) {
+          resultElement.innerText = "Please select a file to upload.";
+          return;
+        }
+
+        var formData = new FormData();
+        formData.append("import[file]", fileInput.files[0]);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/v1/importers", true);
+
+        xhr.onload = function () {
+          resultElement.innerText = "Loading..."
+          if (xhr.status === 200) {
+            resultElement.innerText = "The summary has been loaded! Please press ' to access the terminal."
+            summaryElement.innerText = JSON.stringify(JSON.parse(xhr.responseText), null, 2,);
+          } else {
+            summaryElement.innerText = "An error occurred: " + xhr.responseText;
+          }
+        };
+
+        xhr.send(formData);
+      }
+
+    </script>
+
+    <script src="https://getbootstrap.com/docs/5.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+</html>
