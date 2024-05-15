@@ -50,9 +50,7 @@ class QuakeLogParserService < ApplicationService
 
     current_game[:total_kills] += 1
 
-    unless current_game[:players].include?(killer)
-      return if line.include?('<world>')
-
+    unless current_game[:players].include?(killer) || killer == '<world>'
       current_game[:players] << killer
       current_game[:kills][killer] = 0
     end
@@ -62,8 +60,6 @@ class QuakeLogParserService < ApplicationService
       current_game[:kills][victim] = 0
     end
 
-    current_game[:players].uniq!
-
     update_kills(current_game, killer, victim)
     updated_weapon_type(current_game, weapon)
     sort_kills(current_game)
@@ -72,9 +68,10 @@ class QuakeLogParserService < ApplicationService
 
   def update_kills(current_game, killer, victim)
     if killer == '<world>'
-      current_game[:kills][victim] -= 1
+      current_game[:kills][victim] -= 1 if (current_game[:kills][victim]).positive?
     else
-      current_game[:kills][killer] += 1
+      current_game[:kills][killer] += 1 if killer != victim
+      current_game[:kills][victim] -= 1 if killer == victim && (current_game[:kills][victim]).positive?
     end
   end
 
