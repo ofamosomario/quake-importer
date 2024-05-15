@@ -1,6 +1,3 @@
-
-  
-
 > *Project status:* completed 
 > *:busts_in_silhouette: Author:* Mário Augusto Carvalho Lara Leite
 > *:email: Email:* tkyakow@gmail.com
@@ -55,16 +52,14 @@ docker build
   
 # Tests
 
-> Run in terminal: rspec
+> Run in terminal: rspec spec/controllers/api/v1/importers_controller_spec.rb
   
 # RuboCop
 
-  
 
 ![RUBOCOP!](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvMSFQaCKg10EWCRxKz6sQWiTpHbiMdqjbGA&usqp=CAU)
 
-  
 
-> Run in terminal: rubocop
+> Following Rubocop patterns
 
 **Thank you!**
